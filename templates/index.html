@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Gesture Recognition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hand Gesture Recognition</h1>
+            <p class="subtitle">Real-time prediction using MediaPipe and SVM</p>
+        </header>
+        
+        <div class="content">
+            <div class="video-container">
+                <img src="{{ url_for('video_feed') }}" id="video-feed">
+            </div>
+            
+            <div class="info-panel">
+                <h2>Project Details</h2>
+                <p>This application recognizes hand gestures in real-time using:</p>
+                <ul>
+                    <li>MediaPipe for hand landmark detection</li>
+                    <li>Scikit-learn SVM for classification</li>
+                    <li>Flask for web integration</li>
+                </ul>
+                
+                <div class="prediction-box">
+                    <h3>Gesture Detected:</h3>
+                    <div id="prediction-text">Waiting for hand...</div>
+                </div>
+                
+                <button id="start-btn" class="btn">Start Recognition</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/script.js"></script>
+</body>
+</html>
