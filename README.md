@@ -59,44 +59,7 @@ python app.py
 ```
 Access `http://localhost:5000` in your browser
 
-### Train Custom Models
-```bash
-python train.py \
-  --data_path dataset/ \
-  --model svm \
-  --output models/svm_custom.pkl
-```
 
-## 📂 Project Structure
-```
-.
-├── app.py                 # Flask application
-├── train.py               # Model training script
-├── utils/
-│   ├── preprocessing.py   # Landmark normalization
-│   └── visualization.py   # Performance plotting
-├── models/                # Pretrained models
-├── dataset/               # Training data
-└── assets/                # Documentation resources
-```
-
-## 🔧 Customization
-### Add New Gestures
-1. Record samples:
-```python
-python capture.py --gesture thumbs_up --samples 100
-```
-2. Retrain models:
-```bash
-python train.py --data_path new_gestures/
-```
-
-## 🤝 Contributing
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/new-model`)
-3. Commit changes (`git commit -m 'Add CNN model'`)
-4. Push to branch (`git push origin feature/new-model`)
-5. Open a Pull Request
 
 ## 📜 License
 MIT License - See [LICENSE](LICENSE) for details
