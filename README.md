@@ -1,5 +1,3 @@
-Here's the complete `README.md` content in a single copy-pasteable block:
-
 ```markdown
 # ✋ Hand Gesture Recognition System
 
@@ -15,18 +13,12 @@ A real-time hand gesture classifier using 3D landmark detection and machine lear
 - **Low Latency**: <100ms end-to-end processing
 
 ## 🧠 Model Performance
-| Model          | Accuracy | F1-Score | Speed (ms/frame) |
-|----------------|----------|----------|------------------|
-| SVM            | 98.69%   | 98.69%   | 45               |
-| KNN            | 97.90%   | 97.90%   | 8                |
-| Random Forest  | 97.74%   | 97.74%   | 22               |
+| Model          | Accuracy | F1-Score |
+|----------------|----------|----------|
+| SVM            | 98.69%   | 98.69%   |
+| KNN            | 97.90%   | 97.90%   |
+| Random Forest  | 97.74%   | 97.74%   |
 
-![Confusion Matrix](assets/confusion_matrix.png)
-
-## 💻 Hardware Requirements
-- Webcam (720p+ recommended)
-- CPU: Intel i5+ or equivalent
-- GPU: Optional (for >30FPS processing)
 
 ## 🛠️ Installation
 ```bash
