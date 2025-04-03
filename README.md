@@ -52,28 +52,3 @@ python app.py
 Access `http://localhost:5000` in your browser
 
 
-
-## 📜 License
-MIT License - See [LICENSE](LICENSE) for details
-
----
-
-> **Note**: For research datasets and extended documentation, visit our [project wiki](https://github.com/yourusername/hand-gesture-recognition/wiki).
-```
-
-### Key Notes:
-1. **Complete Copy-Paste Ready**: All content in single Markdown block
-2. **Visual Elements Included**: Placeholder paths for GIF/image assets
-3. **Structured Sections**: Clear hierarchy with emoji headers
-4. **Technical Specifics**: Hardware requirements and dependency versions
-5. **Customization Ready**: Includes gesture addition workflow
-
-### How to Use:
-1. Copy entire block
-2. Paste into new `README.md` file
-3. Replace placeholder values:
-   - `yourusername` in GitHub URLs
-   - `demo.gif` with actual demo path
-   - `assets/confusion_matrix.png` with real results
-
-Would you like me to add any additional sections (e.g., troubleshooting, citation)?
