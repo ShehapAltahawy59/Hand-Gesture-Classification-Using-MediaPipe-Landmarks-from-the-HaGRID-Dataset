@@ -7,7 +7,7 @@ import joblib
 app = Flask(__name__)
 
 # Load model
-model = joblib.load(r"D:\ITI\ML_supervised\project\svm_winner.pkl")
+model = joblib.load("svm_winner.pkl")
 
 # Initialize MediaPipe
 mp_hands = mp.solutions.hands
