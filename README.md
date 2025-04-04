@@ -2,7 +2,7 @@
 
 # Hand Gesture Recognition System
 
-[](demo.gif)
+![](demo.gif)
 
 
 *Real-time gesture classification demo*
