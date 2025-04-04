@@ -290,11 +290,15 @@
             console.log("Disconnected from server");
         });
         
-        socket.on('prediction', (data) => {
-    predictionText.textContent = data.gesture;
-    confidenceText.textContent = `Confidence: ${(data.confidence * 100).toFixed(1)}%`;
+        // Update your socket.on('prediction') handler
+socket.on('prediction', (data) => {
+    const predictionElement = document.getElementById('prediction-text');
+    const confidenceElement = document.getElementById('confidence-text');
+    const videoElement = document.getElementById('video-element');
     
-    // Display the annotated frame if available
+    predictionElement.textContent = data.gesture;
+    confidenceElement.textContent = `Confidence: ${(data.confidence * 100).toFixed(1)}%`;
+    
     if (data.frame) {
         videoElement.src = data.frame;
     }
