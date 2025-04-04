@@ -21,13 +21,7 @@ model = joblib.load("Models/svm_winner.pkl")
 
 # Initialize MediaPipe
 mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(
-    static_image_mode=False,
-    max_num_hands=1,
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5
-)
-
+hands = mp_hands.Hands(min_detection_confidence=0.5, min_tracking_confidence=0.5)
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -55,6 +49,9 @@ def handle_frame(data):
         
         # Process frame
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        cv2.imshow("Input Frame", frame)
+        cv2.waitKey(1)
         results = hands.process(rgb_frame)
         
         if results.multi_hand_landmarks:
