@@ -27,7 +27,7 @@ A comprehensive hand gesture recognition pipeline featuring:
 - Real-time classification with 98.7% accuracy
 
 ## System Architecture
-```mermaid
+
 graph TD
     A[Webcam Input] --> B[MediaPipe Landmark Detection]
     B --> C[Feature Extraction]
