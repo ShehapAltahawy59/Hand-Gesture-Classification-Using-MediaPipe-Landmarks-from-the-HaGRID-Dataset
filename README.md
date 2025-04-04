@@ -82,6 +82,10 @@ python app.py
 ```
 Access the interface at `http://localhost:5000`
 
+### Running the script
+```bash
+python script.py
+```
 
 
 ## Directory Structure
