@@ -1,7 +1,7 @@
 flask
 opencv-python
 mediapipe
-scikit-learn
+scikit-learn==1.5.0
 joblib
 numpy
 flask-socketio

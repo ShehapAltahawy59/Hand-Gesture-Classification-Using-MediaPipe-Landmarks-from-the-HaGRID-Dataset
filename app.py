@@ -97,11 +97,13 @@ def handle_frame(data):
                         'confidence': float(confidence),
                         'frame': f"data:image/jpeg;base64,{frame_base64}"
                     })
+                    print(prediction)
                 else:
                     emit('prediction', {
                         'gesture': 'Invalid hand data',
                         'confidence': 0.0
                     })
+                    print("no hand")
         else:
             emit('prediction', {
                 'gesture': 'No hand detected',
