@@ -3,327 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-time Hand Gesture Recognition</title>
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        #video {
-            display: none;
-        }
-        #canvas {
-            width: 640px;
-            height: 480px;
-            background: #000;
-            margin: 10px auto;
-            display: block;
-        }
-        #controls {
-            margin: 20px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-        }
-        button:disabled {
-            background: #cccccc;
-        }
-        #stats {
-            margin: 10px;
-            font-family: monospace;
-        }
-        #prediction {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 15px;
-            min-height: 30px;
-            color: #2c3e50;
-        }
-        select {
-            padding: 8px;
-            margin: 5px;
-        }
-    </style>
+    <title>Hand Gesture Recognition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Real-time Hand Gesture Recognition</h1>
+        <header>
+            <h1>Hand Gesture Recognition</h1>
+            <p class="subtitle">Real-time prediction using MediaPipe and SVM</p>
+        </header>
         
-        <div id="cameraSelection" style="margin: 15px;">
-            <select id="cameraSelect"></select>
-            <button id="startBtn">Start</button>
-            <button id="stopBtn" disabled>Stop</button>
-        </div>
-        
-        <video id="video" playsinline></video>
-        <canvas id="canvas"></canvas>
-        
-        <div id="prediction">Press Start to begin</div>
-        <div id="stats">Status: Not connected</div>
-        
-        <div class="info">
-            <p>Hold your hand in front of the camera for real-time prediction</p>
+        <div class="content">
+            <div class="video-container">
+                <img src="{{ url_for('video_feed') }}" id="video-feed">
+            </div>
+            
+            <div class="info-panel">
+                <h2>Project Details</h2>
+                <p>This application recognizes hand gestures in real-time using:</p>
+                <ul>
+                    <li>MediaPipe for hand landmark detection</li>
+                    <li>Scikit-learn SVM for classification</li>
+                    <li>Flask for web integration</li>
+                </ul>
+                
+                <div class="prediction-box">
+                    <h3>Gesture Detected:</h3>
+                    <div id="prediction-text">Waiting for hand...</div>
+                </div>
+                
+                <button id="start-btn" class="btn">Start Recognition</button>
+            </div>
         </div>
     </div>
-
-    <script>
-        // DOM elements
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const cameraSelect = document.getElementById('cameraSelect');
-        const predictionElement = document.getElementById('prediction');
-        const statsElement = document.getElementById('stats');
-        
-        // State variables
-        let stream = null;
-        let socket = null;
-        let isProcessing = false;
-        let frameInterval = 100; // ms between frame sends
-        let lastFrameTime = 0;
-        let fps = 0;
-        let frameCount = 0;
-        let lastFpsUpdate = 0;
-        let frameQueue = [];
-        let processingFrame = false;
-        let frameIdCounter = 0;
-        let lastProcessedFrameId = -1;
-        
-        // Initialize camera selection
-        async function initCameraSelection() {
-            try {
-                // First get permission by accessing any camera
-                await navigator.mediaDevices.getUserMedia({ video: true });
-                
-                // Then enumerate devices with labels
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const videoDevices = devices.filter(d => d.kind === 'videoinput');
-                
-                cameraSelect.innerHTML = '';
-                videoDevices.forEach(device => {
-                    const option = document.createElement('option');
-                    option.value = device.deviceId;
-                    option.text = device.label || `Camera ${cameraSelect.length + 1}`;
-                    cameraSelect.appendChild(option);
-                });
-                
-                if (videoDevices.length > 0) {
-                    startBtn.disabled = false;
-                }
-            } catch (err) {
-                console.error('Camera initialization failed:', err);
-                statsElement.textContent = `Error: ${err.message}`;
-            }
-        }
-        
-        // Start video processing
-        async function startProcessing() {
-            try {
-                const deviceId = cameraSelect.value;
-                const constraints = {
-                    video: {
-                        deviceId: deviceId ? { exact: deviceId } : undefined,
-                        width: { ideal: 720 },
-                        height: { ideal: 960 },
-                        frameRate: { ideal: 30 }
-                    }
-                };
-                
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-                video.srcObject = stream;
-                video.play();
-                
-                // Set canvas size
-                video.addEventListener('loadedmetadata', () => {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                });
-                
-                // Connect to WebSocket server
-                socket = io();
-                
-                socket.on('connect', () => {
-                    statsElement.textContent = 'Connected to server';
-                    isProcessing = true;
-                    startBtn.disabled = true;
-                    stopBtn.disabled = false;
-                    cameraSelect.disabled = true;
-                    predictionElement.textContent = 'Processing...';
-                    
-                    // Start frame processing loop
-                    processFrame();
-                });
-                
-                socket.on('processed_frame', (data) => {
-                    if (data.frameId > lastProcessedFrameId) {
-                        lastProcessedFrameId = data.frameId;
-                        
-                        // Update prediction
-                        predictionElement.textContent = `Prediction: ${data.prediction}`;
-                        
-                        // Draw processed frame
-                        const img = new Image();
-                        img.onload = () => {
-                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            processingFrame = false;
-                        };
-                        img.src = data.frame;
-                        
-                        // Update stats
-                        frameCount++;
-                        const now = performance.now();
-                        if (now - lastFpsUpdate >= 1000) {
-                            fps = frameCount;
-                            frameCount = 0;
-                            lastFpsUpdate = now;
-                            statsElement.textContent = 
-                                `FPS: ${fps} | Latency: ${data.processing_time}`;
-                        }
-                        
-                        // Remove older frames from queue
-                        frameQueue = frameQueue.filter(f => f.frameId > data.frameId - 5);
-                    }
-                });
-                
-                socket.on('original_frame', (data) => {
-                    if (data.frameId > lastProcessedFrameId) {
-                        lastProcessedFrameId = data.frameId;
-                        
-                        // Draw original frame (no annotations)
-                        const img = new Image();
-                        img.onload = () => {
-                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                            processingFrame = false;
-                        };
-                        img.src = data.frame;
-                        predictionElement.textContent = 'No hand detected';
-                        
-                        // Still update stats
-                        frameCount++;
-                        const now = performance.now();
-                        if (now - lastFpsUpdate >= 1000) {
-                            fps = frameCount;
-                            frameCount = 0;
-                            lastFpsUpdate = now;
-                            statsElement.textContent = `FPS: ${fps} | No hand detected`;
-                        }
-                        
-                        // Remove older frames from queue
-                        frameQueue = frameQueue.filter(f => f.frameId > data.frameId - 5);
-                    }
-                });
-                
-                socket.on('disconnect', () => {
-                    statsElement.textContent = 'Disconnected from server';
-                    stopProcessing();
-                });
-                
-                socket.on('processing_error', (data) => {
-                    console.error('Server error:', data.error);
-                    statsElement.textContent = `Error: ${data.error}`;
-                    processingFrame = false;
-                });
-                
-            } catch (err) {
-                console.error('Error starting processing:', err);
-                statsElement.textContent = `Error: ${err.message}`;
-                stopProcessing();
-            }
-        }
-        
-        // Frame processing loop
-        function processFrame() {
-            if (!isProcessing) return;
-            
-            const now = Date.now();
-            if (now - lastFrameTime >= frameInterval && !processingFrame) {
-                lastFrameTime = now;
-                processingFrame = true;
-                
-                // Capture frame
-                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                const frameData = canvas.toDataURL('image/jpeg', 0.8);
-                const frameId = frameIdCounter++;
-                
-                // Store frame in queue
-                frameQueue.push({
-                    frameId: frameId,
-                    timestamp: now,
-                    frame: frameData
-                });
-                
-                // Send to server
-                if (socket && socket.connected) {
-                    socket.emit('frame', { 
-                        frame: frameData,
-                        frameId: frameId
-                    });
-                }
-            }
-            
-            // Continue processing
-            requestAnimationFrame(processFrame);
-        }
-        
-        // Stop video processing
-        function stopProcessing() {
-            isProcessing = false;
-            processingFrame = false;
-            
-            // Stop video stream
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            
-            // Disconnect socket
-            if (socket) {
-                socket.disconnect();
-                socket = null;
-            }
-            
-            // Reset state
-            frameQueue = [];
-            frameIdCounter = 0;
-            lastProcessedFrameId = -1;
-            
-            // Reset UI
-            startBtn.disabled = false;
-            stopBtn.disabled = true;
-            cameraSelect.disabled = false;
-            predictionElement.textContent = 'Press Start to begin';
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-        
-        // Event listeners
-        startBtn.addEventListener('click', startProcessing);
-        stopBtn.addEventListener('click', stopProcessing);
-        
-        // Initialize on load
-        window.addEventListener('load', () => {
-            initCameraSelection();
-        });
-    </script>
+    
+    <script src="/static/script.js"></script>
 </body>
 </html>
