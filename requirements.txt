@@ -4,8 +4,4 @@ mediapipe
 scikit-learn==1.5.0
 joblib
 numpy
-flask-socketio
-eventlet
-python-engineio
-python-socketio
-gunicorn
+
