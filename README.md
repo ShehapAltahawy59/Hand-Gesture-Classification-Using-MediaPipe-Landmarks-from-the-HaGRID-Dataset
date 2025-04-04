@@ -1,4 +1,3 @@
-Here's a professional README.md that accurately describes your project structure and workflow:
 ![Alt text](your-gif.gif?raw=true&v=2)
 
 # Hand Gesture Recognition System
@@ -64,7 +63,7 @@ graph TD
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/hand-gesture-recognition.git
+git clone https://github.com/ShehapAltahawy59/Hand-Gesture-Classification-Using-MediaPipe-Landmarks-from-the-HaGRID-Dataset.git
 cd hand-gesture-recognition
 
 # Create virtual environment
