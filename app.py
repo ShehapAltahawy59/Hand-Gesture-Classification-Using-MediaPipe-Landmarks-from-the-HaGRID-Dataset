@@ -1,3 +1,6 @@
+import os
+import eventlet
+eventlet.monkey_patch()
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import cv2
@@ -5,9 +8,9 @@ import mediapipe as mp
 import numpy as np
 import base64
 import joblib
-import eventlet
 
-eventlet.monkey_patch()  # Required for WebSocket support
+
+
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -83,5 +86,4 @@ def handle_frame(data):
         print(f"Error processing frame: {str(e)}")
         emit('error', {'message': str(e)})
 
-if __name__ == '__main__':
-    socketio.run(app)
+
