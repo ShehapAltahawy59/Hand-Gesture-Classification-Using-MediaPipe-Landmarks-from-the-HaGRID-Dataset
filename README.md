@@ -3,7 +3,8 @@ Here's a professional README.md that accurately describes your project structure
 ```markdown
 # Hand Gesture Recognition System
 
-![System Demonstration]![](https://github.com/ShehapAltahawy59/Hand-Gesture-Classification-Using-MediaPipe-Landmarks-from-the-HaGRID-Dataset/blob/main/demo.gif) *Real-time gesture classification demo*
+![System Demonstration]
+![Alt](https://github.com/ShehapAltahawy59/Hand-Gesture-Classification-Using-MediaPipe-Landmarks-from-the-HaGRID-Dataset/blob/main/demo.gif) *Real-time gesture classification demo*
 
 ## Table of Contents
 1. [Project Overview](#project-overview)
