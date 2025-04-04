@@ -44,8 +44,7 @@ graph TD
 ### Preprocessing Pipeline (notebooks/)
 1. Data normalization
 2. Feature engineering
-3. Dimensionality reduction
-4. Train-test splitting
+3. Train-test splitting
 
 ### Model Training Workflow
 1. Initial evaluation of multiple algorithms
@@ -85,24 +84,15 @@ python app.py
 ```
 Access the interface at `http://localhost:5000`
 
-### Training New Models
-1. Edit preprocessing steps in `notebooks/data_processing.ipynb`
-2. Run model training in `notebooks/model_training.ipynb`
-3. Export best model to `models/` directory
+
 
 ## Directory Structure
 ```
 .
 ├── models/                # Pretrained model files
 │   ├── svm_model.pkl
-│   ├── knn_model.pkl
-│   └── random_forest.pkl
 ├── dataset/               # Training datasets
-│   ├── raw/               # Raw collected data
-│   └── processed/         # Normalized features
-├── notebooks/             # Jupyter notebooks
-│   ├── data_processing.ipynb
-│   └── model_training.ipynb
+├── notebooks.ipynb            # Jupyter notebooks
 ├── app.py                 # Flask application
 ├── requirements.txt       # Dependencies
 └── demo.gif               # System demonstration
