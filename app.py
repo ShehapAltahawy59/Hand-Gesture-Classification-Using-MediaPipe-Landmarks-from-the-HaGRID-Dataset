@@ -81,6 +81,7 @@ def handle_frame(data):
                 'gesture': 'No hand detected',
                 'confidence': 0.0
             })
+        print("here")
             
     except Exception as e:
         print(f"Error processing frame: {str(e)}")
