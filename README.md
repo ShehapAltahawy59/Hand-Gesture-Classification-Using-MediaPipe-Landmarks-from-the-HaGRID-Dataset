@@ -2,7 +2,6 @@
 
 # Hand Gesture Recognition System
 
-![System Demonstration]
 
 ![Alt](https://github.com/ShehapAltahawy59/Hand-Gesture-Classification-Using-MediaPipe-Landmarks-from-the-HaGRID-Dataset/raw/main/demo.gif?v=3) 
 
