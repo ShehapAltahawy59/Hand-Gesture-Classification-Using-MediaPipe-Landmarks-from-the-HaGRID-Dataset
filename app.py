@@ -50,8 +50,7 @@ def handle_frame(data):
         # Process frame
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-        cv2.imshow("Input Frame", frame)
-        cv2.waitKey(1)
+        
         results = hands.process(rgb_frame)
         
         if results.multi_hand_landmarks:
