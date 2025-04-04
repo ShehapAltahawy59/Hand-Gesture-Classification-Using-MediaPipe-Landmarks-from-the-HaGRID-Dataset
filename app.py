@@ -75,13 +75,15 @@ def handle_frame(data):
                     'gesture': str(prediction),
                     'confidence': float(confidence)
                 })
+                print("here")
                 
         else:
             emit('prediction', {
                 'gesture': 'No hand detected',
-                'confidence': 0.0
+                'confidence': 5.0
             })
-        print("here")
+            print("no hand")
+        
             
     except Exception as e:
         print(f"Error processing frame: {str(e)}")
