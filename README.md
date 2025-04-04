@@ -36,7 +36,6 @@ graph TD
 ## Model Development
 ### Dataset Preparation
 - Located in `dataset/` directory
-- Contains raw and processed training data
 - Includes labeled gesture samples
 
 ### Preprocessing Pipeline (notebooks/)
