@@ -291,9 +291,15 @@
         });
         
         socket.on('prediction', (data) => {
-            predictionText.textContent = data.gesture;
-            confidenceText.textContent = `Confidence: ${(data.confidence * 100).toFixed(1)}%`;
-        });
+    predictionText.textContent = data.gesture;
+    confidenceText.textContent = `Confidence: ${(data.confidence * 100).toFixed(1)}%`;
+    
+    // Display the annotated frame if available
+    if (data.frame) {
+        videoElement.src = data.frame;
+    }
+});
+
         
         socket.on('error', (data) => {
             predictionText.textContent = `Error: ${data.message}`;

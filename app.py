@@ -1,6 +1,7 @@
-import os
+
 import eventlet
 eventlet.monkey_patch()
+import os
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import cv2
@@ -43,6 +44,9 @@ def handle_disconnect():
 @socketio.on('frame')
 def handle_frame(data):
     try:
+        # Initialize MediaPipe drawing utilities
+        mp_drawing = mp.solutions.drawing_utils
+        
         # Convert base64 image to OpenCV format
         header, encoded = data.split(",", 1)
         img_bytes = base64.b64decode(encoded)
@@ -68,25 +72,47 @@ def handle_frame(data):
                 
                 # Predict
                 features = landmarks.flatten().reshape(1, -1)
-                prediction = model.predict(features)[0]
-                confidence = np.max(model.predict_proba(features))
                 
-                emit('prediction', {
-                    'gesture': str(prediction),
-                    'confidence': float(confidence)
-                })
-                print("here")
-                
+                if not np.isnan(features).any():
+                    prediction = model.predict(features)[0]
+                    confidence = np.max(model.predict_proba(features))
+                    
+                    # Draw landmarks and prediction on frame
+                    mp_drawing.draw_landmarks(
+                        frame, 
+                        hand_landmarks, 
+                        mp_hands.HAND_CONNECTIONS,
+                        mp_drawing.DrawingSpec(color=(121, 22, 76), thickness=2, circle_radius=4),
+                        mp_drawing.DrawingSpec(color=(121, 44, 250), thickness=2, circle_radius=2)
+                    )
+                    
+                    # Display prediction text
+                    cv2.putText(frame, f'Prediction: {prediction}', (50, 50),
+                                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                    cv2.putText(frame, f'Confidence: {confidence:.2f}', (50, 100),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2, cv2.LINE_AA)
+                    
+                    # Convert frame back to base64
+                    _, buffer = cv2.imencode('.jpg', frame)
+                    frame_base64 = base64.b64encode(buffer).decode('utf-8')
+                    
+                    emit('prediction', {
+                        'gesture': str(prediction),
+                        'confidence': float(confidence),
+                        'frame': f"data:image/jpeg;base64,{frame_base64}"
+                    })
+                else:
+                    emit('prediction', {
+                        'gesture': 'Invalid hand data',
+                        'confidence': 0.0
+                    })
         else:
             emit('prediction', {
                 'gesture': 'No hand detected',
-                'confidence': 5.0
+                'confidence': 0.0
             })
-            print("no hand")
-        
             
     except Exception as e:
         print(f"Error processing frame: {str(e)}")
         emit('error', {'message': str(e)})
-
 
