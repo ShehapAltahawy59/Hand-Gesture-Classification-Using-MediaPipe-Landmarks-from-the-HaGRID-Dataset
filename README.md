@@ -1,6 +1,6 @@
 Here's a professional README.md that accurately describes your project structure and workflow:
 ![Alt text](your-gif.gif?raw=true&v=2)
-```markdown
+
 # Hand Gesture Recognition System
 
 ![System Demonstration]
@@ -29,7 +29,7 @@ graph TD
     B --> C[Feature Extraction]
     C --> D[Pre-trained Model Inference]
     D --> E[Flask Web Interface]
-```
+
 
 ## Model Development
 ### Dataset Preparation
