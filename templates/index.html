@@ -270,13 +270,19 @@
         
         // Process frames and send to server
         function processFrame() {
-            if (!isProcessing) return;
-            
-            ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-            const imageData = canvasElement.toDataURL('image/jpeg', 0.7);
-            socket.emit('frame', imageData);
-        }
-        
+    if (!isProcessing) return;
+    
+    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+    
+    // Reduce quality for server processing
+    const imageData = canvas.toDataURL('image/jpeg', 0.6);
+    
+    // Add timestamp to prevent caching issues
+    socket.emit('frame', imageData + '&t=' + Date.now());
+    
+    // Adjust FPS based on server response
+    setTimeout(processFrame, isMobile ? 200 : 100);
+}
         // Socket event handlers
         socket.on('connect', () => {
             statusDot.classList.add('active');

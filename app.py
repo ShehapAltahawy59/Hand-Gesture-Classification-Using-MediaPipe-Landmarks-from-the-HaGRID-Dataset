@@ -57,16 +57,21 @@ def handle_frame(data):
             for hand_landmarks in results.multi_hand_landmarks:
                 # Extract and normalize landmarks (same as working version)
                 landmarks = np.array([(lm.x, lm.y, lm.z) for lm in hand_landmarks.landmark])
-                
+
+                # Normalize: Recenter based on wrist position (landmark 0)
                 wrist_x, wrist_y, wrist_z = landmarks[0]
-                landmarks[:, 0] -= wrist_x
-                landmarks[:, 1] -= wrist_y
-                mid_finger_x, mid_finger_y, _ = landmarks[12]
+                landmarks[:, 0] -= wrist_x  # Center x-coordinates
+                landmarks[:, 1] -= wrist_y  # Center y-coordinates
+                # DO NOT modify the z-coordinates
+
+                # Scale only x and y using the mid-finger tip (landmark 12)
+                mid_finger_x, mid_finger_y, _ = landmarks[12]  # Ignore z for scaling
                 scale_factor = np.sqrt(mid_finger_x**2 + mid_finger_y**2)
-                landmarks[:, 0] /= scale_factor
-                landmarks[:, 1] /= scale_factor
-                
-                # Predict (same as working version)
+                landmarks[:, 0] /= scale_factor  # Scale x
+                landmarks[:, 1] /= scale_factor  # Scale y
+                # DO NOT scale z-coordinates
+
+                # Flatten the features for SVM
                 features = landmarks.flatten().reshape(1, -1)
                 
                 if not np.isnan(features).any():
@@ -102,6 +107,7 @@ def handle_frame(data):
                 'gesture': 'No hand detected',
                 'confidence': 0.0
             })
+            print("nohand")
             
     except Exception as e:
         print(f"Error processing frame: {str(e)}")
