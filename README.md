@@ -1,5 +1,5 @@
 Here's a professional README.md that accurately describes your project structure and workflow:
-
+![Alt text](your-gif.gif?raw=true&v=2)
 ```markdown
 # Hand Gesture Recognition System
 
