@@ -5,39 +5,330 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hand Gesture Recognition</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --success: #4cc9f0;
+            --danger: #f72585;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        
+        .video-container {
+            flex: 1;
+            min-width: 300px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #video-element {
+            width: 100%;
+            display: block;
+            transform: scaleX(-1);
+        }
+        
+        .info-panel {
+            flex: 1;
+            min-width: 300px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        
+        ul {
+            list-style-position: inside;
+            margin-bottom: 1.5rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .prediction-box {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+        
+        #prediction-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+        
+        #confidence-text {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn i {
+            font-size: 1.2rem;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #6c757d;
+        }
+        
+        .status-dot.active {
+            background-color: var(--success);
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Hand Gesture Recognition</h1>
-            <p class="subtitle">Real-time prediction using MediaPipe and SVM</p>
+            <h1><i class="fas fa-hand-paper"></i> Hand Gesture Recognition</h1>
+            <p class="subtitle">Real-time prediction using MediaPipe and Machine Learning</p>
         </header>
         
         <div class="content">
             <div class="video-container">
-                <img src="{{ url_for('video_feed') }}" id="video-feed">
+                <video id="video-element" autoplay muted></video>
+                <canvas id="canvas-element" style="display: none;"></canvas>
             </div>
             
             <div class="info-panel">
-                <h2>Project Details</h2>
+                <h2><i class="fas fa-info-circle"></i> Project Details</h2>
                 <p>This application recognizes hand gestures in real-time using:</p>
                 <ul>
-                    <li>MediaPipe for hand landmark detection</li>
-                    <li>Scikit-learn SVM for classification</li>
-                    <li>Flask for web integration</li>
+                    <li><strong>MediaPipe</strong> for hand landmark detection</li>
+                    <li><strong>Scikit-learn</strong> SVM for classification</li>
+                    <li><strong>WebSocket</strong> for real-time communication</li>
+                    <li><strong>Flask</strong> for server-side processing</li>
                 </ul>
                 
                 <div class="prediction-box">
-                    <h3>Gesture Detected:</h3>
+                    <h3><i class="fas fa-hand-pointer"></i> Gesture Detected</h3>
                     <div id="prediction-text">Waiting for hand...</div>
+                    <div id="confidence-text">Confidence: 0%</div>
                 </div>
                 
-                <button id="start-btn" class="btn">Start Recognition</button>
+                <button id="control-btn" class="btn">
+                    <i class="fas fa-play"></i> Start Recognition
+                </button>
+                
+                <div class="status-indicator">
+                    <div id="status-dot" class="status-dot"></div>
+                    <span id="status-text">Disconnected</span>
+                </div>
             </div>
         </div>
     </div>
     
-    <script src="/static/script.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        // DOM Elements
+        const videoElement = document.getElementById('video-element');
+        const canvasElement = document.getElementById('canvas-element');
+        const ctx = canvasElement.getContext('2d');
+        const predictionText = document.getElementById('prediction-text');
+        const confidenceText = document.getElementById('confidence-text');
+        const controlBtn = document.getElementById('control-btn');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+        
+        // WebSocket connection
+        const socket = io();
+        let isProcessing = false;
+        let frameInterval;
+        
+        // Webcam setup
+        async function setupWebcam() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: 640, 
+                        height: 480,
+                        facingMode: 'user' 
+                    },
+                    audio: false
+                });
+                videoElement.srcObject = stream;
+                
+                // Set canvas dimensions to match video
+                videoElement.onloadedmetadata = () => {
+                    canvasElement.width = videoElement.videoWidth;
+                    canvasElement.height = videoElement.videoHeight;
+                };
+                
+                return true;
+            } catch (err) {
+                console.error("Error accessing webcam:", err);
+                predictionText.textContent = "Webcam access denied";
+                return false;
+            }
+        }
+        
+        // Process frames and send to server
+        function processFrame() {
+            if (!isProcessing) return;
+            
+            ctx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            const imageData = canvasElement.toDataURL('image/jpeg', 0.7);
+            socket.emit('frame', imageData);
+        }
+        
+        // Socket event handlers
+        socket.on('connect', () => {
+            statusDot.classList.add('active');
+            statusText.textContent = "Connected";
+            console.log("Connected to server");
+        });
+        
+        socket.on('disconnect', () => {
+            statusDot.classList.remove('active');
+            statusText.textContent = "Disconnected";
+            console.log("Disconnected from server");
+        });
+        
+        socket.on('prediction', (data) => {
+            predictionText.textContent = data.gesture;
+            confidenceText.textContent = `Confidence: ${(data.confidence * 100).toFixed(1)}%`;
+        });
+        
+        socket.on('error', (data) => {
+            predictionText.textContent = `Error: ${data.message}`;
+            confidenceText.textContent = "";
+        });
+        
+        // Control button handler
+        controlBtn.addEventListener('click', async () => {
+            if (!isProcessing) {
+                // Start processing
+                const success = await setupWebcam();
+                if (success) {
+                    isProcessing = true;
+                    controlBtn.innerHTML = '<i class="fas fa-pause"></i> Pause Recognition';
+                    frameInterval = setInterval(processFrame, 100); // ~10 FPS
+                }
+            } else {
+                // Stop processing
+                isProcessing = false;
+                clearInterval(frameInterval);
+                controlBtn.innerHTML = '<i class="fas fa-play"></i> Start Recognition';
+                
+                // Stop webcam stream
+                if (videoElement.srcObject) {
+                    videoElement.srcObject.getTracks().forEach(track => track.stop());
+                    videoElement.srcObject = null;
+                }
+                
+                predictionText.textContent = "Recognition paused";
+                confidenceText.textContent = "";
+            }
+        });
+        
+        // Initial setup
+        controlBtn.innerHTML = '<i class="fas fa-play"></i> Start Recognition';
+    </script>
 </body>
 </html>
